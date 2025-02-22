@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Check</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f9;
+        }
+
+        .container {
+            text-align: center;
+            background: white;
+            padding: 20px 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        input[type="text"], input[type="tel"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .output {
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .output p {
+            font-size: 1rem;
+            color: #333;
+        }
+
+        .download-section {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Security Check</h1>
+        <form id="securityForm">
+            <div id="step1">
+                <p>Welcome to Unlocking Android Security Features Page.</p>
+                <p>For entering the process, please enter your signature and press continue.</p>
+                <input type="text" id="signature" placeholder="Enter your signature" required>
+                <button type="button" id="continue1">Continue</button>
+            </div>
+
+            <div id="step2" style="display: none;">
+                <h1>Second Security Checkpoint</h1>
+                <p>Please enter the required information below:</p>
+                <input type="text" id="imei" placeholder="Enter IMEI" required>
+                <input type="tel" id="phoneNumber" placeholder="Enter Phone Number" required>
+                <button type="submit">Submit</button>
+            </div>
+        </form>
+        <div class="output" id="output"></div>
+        <div class="download-section" id="download-section" style="display: none;">
+            <button id="downloadButton">Download Information</button>
+        </div>
+    </div>
+
+    <script>
+        const step1 = document.getElementById('step1');
+        const step2 = document.getElementById('step2');
+        const continue1 = document.getElementById('continue1');
+        const form = document.getElementById('securityForm');
+        const output = document.getElementById('output');
+        const downloadSection = document.getElementById('download-section');
+        const downloadButton = document.getElementById('downloadButton');
+
+        let collectedData = {
+            signature: '',
+            imei: '',
+            phoneNumber: ''
+        };
+
+        // Handle Step 1: Collect signature and move to next step
+        continue1.addEventListener('click', () => {
+            const signatureInput = document.getElementById('signature').value;
+            if (signatureInput.trim() === '') {
+                alert('Please enter your signature.');
+                return;
+            }
+
+            collectedData.signature = signatureInput;
+            step1.style.display = 'none';
+            step2.style.display = 'block';
+        });
+
+        // Handle Step 2: Collect IMEI and phone number
+        form.addEventListener('submit', function (e) {
+            e.preventDefault(); // Prevent page refresh
+
+            const imeiInput = document.getElementById('imei').value;
+            const phoneNumberInput = document.getElementById('phoneNumber').value;
+
+            if (imeiInput.trim() === '' || phoneNumberInput.trim() === '') {
+                alert('Please fill out all fields.');
+                return;
+            }
+
+            collectedData.imei = imeiInput;
+            collectedData.phoneNumber = phoneNumberInput;
+
+            // Display the collected data
+            output.innerHTML = `
+                <h2>Data Collected:</h2>
+                <p><strong>Signature:</strong> ${collectedData.signature}</p>
+                <p><strong>IMEI:</strong> ${collectedData.imei}</p>
+                <p><strong>Phone Number:</strong> ${collectedData.phoneNumber}</p>
+            `;
+
+            // Show download button
+            downloadSection.style.display = 'block';
+        });
+
+        // Handle Download Button
+        downloadButton.addEventListener('click', () => {
+            const fileContent = `
+Signature: ${collectedData.signature}
+IMEI: ${collectedData.imei}
+Phone Number: ${collectedData.phoneNumber}
+            `.trim();
+
+            const blob = new Blob([fileContent], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'security_info.txt'; // File name
+            a.click();
+            URL.revokeObjectURL(url);
+        });
+    </script>
+</body>
+</html>
